@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="_5_days_weather_forecast">5 DAYS WEATHER FORECAST</string>
+    <string name="weather_in_city">Weather in City</string>
+    <string name="monday">Monday</string>
+    <string name="default_value">0 C</string>
+</resources>
