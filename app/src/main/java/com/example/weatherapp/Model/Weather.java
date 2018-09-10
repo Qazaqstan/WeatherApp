@@ -21,7 +21,7 @@ public class Weather {
 
     public void setDescription(String description) { this.description = description; }
 
-    public String getIcon() { return this.icon; }
+    public String getIconURL() { return "https://openweathermap.org/img/w/" + this.icon + ".png"; }
 
     public void setIcon(String icon) { this.icon = icon; }
 

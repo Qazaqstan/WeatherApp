@@ -34,7 +34,7 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Picasso.get()
-                .load(getImgURL(position))
+                .load(weatherForecastResult.getList().get(position).getWeather().get(0).getIconURL())
                 .into(holder.weatherImg);
 
         setDataToView(holder, position);
@@ -46,27 +46,9 @@ public class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecast
     }
 
     private void setDataToView(MyViewHolder holder, int position) {
-        holder.date.setText(
-                new StringBuilder(Common.convertUnixToDate(weatherForecastResult.getList().get(position).getDt()))
-        );
-
-        holder.description.setText(
-                new StringBuilder(weatherForecastResult.getList().get(position).getWeather().get(0).getDescription())
-        );
-
-        holder.temperature.setText(
-                new StringBuilder(
-                        String.valueOf(weatherForecastResult.getList().get(position).getMain().getTemp())
-                )
-                        .append("°C")
-        );
-    }
-
-    private String getImgURL(int position) {
-        return new StringBuilder("https://openweathermap.org/img/w/")
-                .append(weatherForecastResult.getList().get(position).getWeather().get(0).getIcon())
-                .append(".png")
-                .toString();
+        holder.date.setText(Common.convertUnixToDate(weatherForecastResult.getList().get(position).getDt()));
+        holder.description.setText(weatherForecastResult.getList().get(position).getWeather().get(0).getDescription());
+        holder.temperature.setText(weatherForecastResult.getList().get(position).getMain().getTemp());
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

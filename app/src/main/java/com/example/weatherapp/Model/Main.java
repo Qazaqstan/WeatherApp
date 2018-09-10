@@ -10,7 +10,7 @@ public class Main {
     public Main() {
     }
 
-    public double getTemp() { return this.temp; }
+    public String getTemp() { return this.temp + "°C"; }
 
     public void setTemp(double temp) { this.temp = temp; }
 

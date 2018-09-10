@@ -52,13 +52,10 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View itemView = inflater.inflate(R.layout.fragment_forecast, container, false);
-
         city = (TextView) itemView.findViewById(R.id.city);
-
         listForecast = (RecyclerView) itemView.findViewById(R.id.listForecast);
         listForecast.setHasFixedSize(true);
         listForecast.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-
         return itemView;
     }
 
@@ -86,12 +83,12 @@ public class ForecastFragment extends Fragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<WeatherForecastResult>() {
                     @Override
-                    public void accept(WeatherForecastResult weatherForecastResult) throws Exception {
+                    public void accept(WeatherForecastResult weatherForecastResult) {
                         displayForecastWeather(weatherForecastResult);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
+                    public void accept(Throwable throwable) {
                         Log.d("ERROR", throwable.getMessage());
                     }
                 })
@@ -100,7 +97,6 @@ public class ForecastFragment extends Fragment {
 
     private void displayForecastWeather(WeatherForecastResult weatherForecastResult) {
         city.setText(weatherForecastResult.getCity().getName());
-
         WeatherForecastAdapter adapter = new WeatherForecastAdapter(getContext(), weatherForecastResult);
         listForecast.setAdapter(adapter);
     }

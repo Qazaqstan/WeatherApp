@@ -121,37 +121,16 @@ public class MapFragment extends Fragment implements MapboxMap.OnMapClickListene
     public void onMapReady(MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
         mapboxMap.addOnMapClickListener(this);
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(Common.location.getLatitude(),Common.location.getLongitude()))
-                .zoom(10)
-                .build();
-        mapboxMap.setCameraPosition(cameraPosition);
-
+        mapboxMap.setCameraPosition(setCameraPosition());
         getWeatherDataAndSetDataToViews();
         setCardViewVisibility();
     }
 
-    private void initUI(Bundle savedInstanceState, View itemView) {
-        dayOfWeek = (TextView) itemView.findViewById(R.id.dayOfWeek);
-        weatherImg = (ImageView) itemView.findViewById(R.id.weatherImg);
-        temperature = (TextView) itemView.findViewById(R.id.temperature);
-        description = (TextView) itemView.findViewById(R.id.description);
-        cardView = (CardView) itemView.findViewById(R.id.cardView);
-        mapView = (MapView) itemView.findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.setStyleUrl(Style.MAPBOX_STREETS);
-        mapView.getMapAsync(this);
-    }
-
-    private void setCardViewVisibility() {
-        new CountDownTimer(5000 ,1000) {
-            public void onTick(long millisUntilFinished) {
-                cardView.setVisibility(View.VISIBLE);
-            }
-            public void onFinish() {
-                cardView.setVisibility(View.INVISIBLE);
-            }
-        }.start();
+    private CameraPosition setCameraPosition() {
+        return new CameraPosition.Builder()
+                .target(new LatLng(Common.location.getLatitude(),Common.location.getLongitude()))
+                .zoom(10)
+                .build();
     }
 
     private void getWeatherDataAndSetDataToViews() {
@@ -176,27 +155,36 @@ public class MapFragment extends Fragment implements MapboxMap.OnMapClickListene
         );
     }
 
+    private void setCardViewVisibility() {
+        new CountDownTimer(5000 ,1000) {
+            public void onTick(long millisUntilFinished) {
+                cardView.setVisibility(View.VISIBLE);
+            }
+            public void onFinish() {
+                cardView.setVisibility(View.INVISIBLE);
+            }
+        }.start();
+    }
+
+    private void initUI(Bundle savedInstanceState, View itemView) {
+        dayOfWeek = (TextView) itemView.findViewById(R.id.dayOfWeek);
+        weatherImg = (ImageView) itemView.findViewById(R.id.weatherImg);
+        temperature = (TextView) itemView.findViewById(R.id.temperature);
+        description = (TextView) itemView.findViewById(R.id.description);
+        cardView = (CardView) itemView.findViewById(R.id.cardView);
+        mapView = (MapView) itemView.findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+        mapView.setStyleUrl(Style.MAPBOX_STREETS);
+        mapView.getMapAsync(this);
+    }
+
     private void setDataToViews(WeatherData weatherResult) {
         Picasso.get()
-                .load(
-                        new StringBuilder("https://openweathermap.org/img/w/")
-                                .append(weatherResult.getWeather().get(0).getIcon())
-                                .append(".png")
-                                .toString()
-                )
+                .load(weatherResult.getWeather().get(0).getIconURL())
                 .into(weatherImg);
 
-        dayOfWeek.setText(
-                Common.convertUnixToDate(weatherResult.getDt())
-        );
-
+        dayOfWeek.setText(Common.convertUnixToDate(weatherResult.getDt()));
         description.setText(weatherResult.getName());
-        temperature.setText(
-                new StringBuilder(
-                        String.valueOf(weatherResult.getMain().getTemp())
-                )
-                        .append("°C")
-                        .toString()
-        );
+        temperature.setText(weatherResult.getMain().getTemp());
     }
 }

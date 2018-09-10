@@ -1,5 +1,8 @@
 package com.example.weatherapp.Retrofit;
 
+import com.example.weatherapp.Common.Common;
+import com.example.weatherapp.Key.Key;
+
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;

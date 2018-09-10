@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
@@ -31,24 +30,30 @@ import com.mapbox.mapboxsdk.Mapbox;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MultiplePermissionsListener {
 
-    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    private CoordinatorLayout coordinatorLayout;
-    private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
     private LocationRequest locationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Mapbox.getInstance(getApplicationContext(), Key.MapBox);
+        initMapbox();
         setContentView(R.layout.activity_main);
         initUI();
         initDexter();
+    }
+
+    private void initMapbox() {
+        Mapbox.getInstance(getApplicationContext(), Key.MapBox);
+    }
+
+    private void initUI() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     private void initDexter() {
@@ -59,39 +64,27 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.INTERNET,
                         Manifest.permission.ACCESS_NETWORK_STATE
                 )
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        if (report.areAllPermissionsGranted()) {
-                            buildLocationRequest();
-                            buildLocationCallBack();
-
-                            if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                return;
-                            }
-                            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
-                            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                        Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
-                    }
-                }).check();
+                .withListener(this)
+                .check();
     }
 
-    private void initUI() {
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.root_view);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    @Override
+    public void onPermissionsChecked(MultiplePermissionsReport report) {
+        if (report.areAllPermissionsGranted()) {
+            buildLocationRequest();
+            buildLocationCallBack();
+
+            if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+        }
     }
 
-    private void initViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(MapFragment.getInstance(), "Map");
-        adapter.addFragment(ForecastFragment.getInstance(), "5 DAYS");
-        viewPager.setAdapter(adapter);
+    @Override
+    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+        Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
     }
 
     private void buildLocationRequest() {
@@ -109,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onLocationResult(locationResult);
                 Common.location = locationResult.getLastLocation();
 
-                viewPager = (ViewPager) findViewById(R.id.view_pager);
+                viewPager = (ViewPager) findViewById(R.id.viewPager);
                 initViewPager(viewPager);
                 tabLayout = (TabLayout) findViewById(R.id.tabs);
                 tabLayout.setupWithViewPager(viewPager);
@@ -117,4 +110,11 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
+    private void initViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(MapFragment.getInstance(), "Map");
+        adapter.addFragment(ForecastFragment.getInstance(), "5 DAYS");
+        viewPager.setAdapter(adapter);
+    }
 }
+
