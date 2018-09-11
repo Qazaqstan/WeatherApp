@@ -6,9 +6,6 @@ public class City {
     private Coord coord;
     private String country;
 
-    public City() {
-    }
-
     public int getId() {
         return id;
     }
@@ -23,21 +20,5 @@ public class City {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Coord getCoord() {
-        return coord;
-    }
-
-    public void setCoord(Coord coord) {
-        this.coord = coord;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
     }
 }

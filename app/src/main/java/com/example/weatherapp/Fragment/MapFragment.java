@@ -113,6 +113,7 @@ public class MapFragment extends Fragment implements MapboxMap.OnMapClickListene
     public void onMapClick(@NonNull LatLng point) {
         Common.location.setLongitude(point.getLongitude());
         Common.location.setLatitude(point.getLatitude());
+        Common.isLocationChanged = true;
         getWeatherDataAndSetDataToViews();
         setCardViewVisibility();
     }

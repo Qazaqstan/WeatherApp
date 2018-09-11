@@ -72,27 +72,30 @@ public class ForecastFragment extends Fragment {
     }
 
     private void getForecastWeatherData() {
-        compositeDisposable.add(
-                service.getForecastWeatherByLatLon(
-                        String.valueOf(Common.location.getLatitude()),
-                        String.valueOf(Common.location.getLongitude()),
-                        Key.OpenWeatherMap,
-                        "metric"
-                )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<WeatherForecastResult>() {
-                    @Override
-                    public void accept(WeatherForecastResult weatherForecastResult) {
-                        displayForecastWeather(weatherForecastResult);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        Log.d("ERROR", throwable.getMessage());
-                    }
-                })
-        );
+        if (Common.isLocationChanged) {
+            compositeDisposable.add(
+                    service.getForecastWeatherByLatLon(
+                            String.valueOf(Common.location.getLatitude()),
+                            String.valueOf(Common.location.getLongitude()),
+                            Key.OpenWeatherMap,
+                            "metric"
+                    )
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Consumer<WeatherForecastResult>() {
+                                @Override
+                                public void accept(WeatherForecastResult weatherForecastResult) {
+                                    displayForecastWeather(weatherForecastResult);
+                                }
+                            }, new Consumer<Throwable>() {
+                                @Override
+                                public void accept(Throwable throwable) {
+                                    Log.d("ERROR", throwable.getMessage());
+                                }
+                            })
+            );
+        }
+        Common.isLocationChanged = false;
     }
 
     private void displayForecastWeather(WeatherForecastResult weatherForecastResult) {

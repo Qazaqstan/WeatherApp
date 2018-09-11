@@ -8,6 +8,7 @@ import java.util.Date;
 public class Common {
 
     public static Location location = null;
+    public static boolean isLocationChanged = true;
 
     public static String convertUnixToDate(long dt) {
         Date date = new Date(dt * 1000L);
